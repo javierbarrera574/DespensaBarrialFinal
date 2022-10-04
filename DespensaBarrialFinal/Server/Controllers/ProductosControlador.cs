@@ -1,193 +1,127 @@
-﻿using DespensaBarrialFinal.BD;
-using DespensaBarrialFinal.BD.Entidades;
-using Microsoft.AspNetCore.Mvc;
+﻿using DespensaBarrialFinal.BD.Datos.Entidades;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc;
+using DespensaBarrialFinal.BD.Datos;
 
-namespace WebApplication1.Controllers
+namespace DespensaBarrialFinal.Server.Controllers
 {
 
     [ApiController]
 
-    [Route("API/Productos")]
+    [Route("api/Productos")]
 
     public class ProductosControlador : ControllerBase
     {
-        private readonly ApplicationDbContext context;
+        private readonly AplicacionDbContext context;
 
-        public ProductosControlador(ApplicationDbContext contexto)
+        public ProductosControlador(AplicacionDbContext contexto)
         {
             this.context = contexto;
+       
         }
 
-        [HttpGet("{id:int}")]
+
+        [HttpGet]//esta bien
+        public async Task<ActionResult<List<Productos>>> Get()
+        {
+            var respuesta = await context.Productos.ToListAsync();
+            return respuesta;
+        }
 
 
 
-        public async Task<ActionResult<Productos>> Buscar(int id)
+
+        [HttpPost]
+
+        public async Task<ActionResult<Productos>> PostAgregar(Productos productos)
+        {
+            try
+            {
+                context.Add(productos);
+                await context.SaveChangesAsync();
+                return Ok();
+            }
+            catch(Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+
+
+        [HttpGet("{id}")]
+
+        public async Task<ActionResult<Productos>> GetBuscarPorId(int id)
         {
 
             var productos = await context.Productos.
 
-                Include(prop => prop.Categoria).
-
-                ThenInclude(prop => prop.TipoCategoria).
-
-                Include(prop => prop.ProveedorProductos).
-
-                FirstOrDefaultAsync(prop => prop.IdProductos == id);
+                Where(prop => prop.Id == id).
+                Include(p => p.Proveedores).
+                FirstOrDefaultAsync() ;
 
             return productos;
 
+
         }
 
-        [HttpGet("CargaSelectiva/{id:int}")]
 
-        public async Task<ActionResult> GetSelectivo(int id)
+        [HttpDelete("{id}")]
+        public ActionResult DeleteBorrar (int id)
         {
+            var producto = context.Productos.Where(x => x.Id == id).FirstOrDefault();
 
-            var productos = await context.Productos.Select(prop =>
-            new
+            if (producto == null)
             {
-                IdProductos = prop.IdProductos,
-
-                NombreProducto = prop.NombreProducto,
-
-                DescripcionProducto = prop.DescripcionProducto,
-
-                FechaVencimientoProducto = prop.FechaVencimientoProducto,
-
-                PrecioProducto = prop.PrecioProducto,
-
+                return NotFound($"El registro {id} no fue encontrado");
             }
 
-            ).FirstOrDefaultAsync(prop => prop.IdProductos == id);
-
-
-            if (productos is null)
+            try
             {
-                return NotFound();
+                context.Productos.Remove(producto);
+                context.SaveChanges();
+                return Ok($"El registro de {producto.NombreProducto} ha sido borrado.");
+            }
+            catch (Exception e)
+            {
+                return BadRequest($"Los datos no pudieron eliminarse por: {e.Message}");
+            }
+        }
+
+       
+
+
+        [HttpPut("{id}")]
+        public ActionResult Put(int id, [FromBody] Productos productos)
+        {
+            if (id != productos.Id)
+            {
+                return BadRequest("Datos incorrectos");
             }
 
-            return Ok(productos);
-        }
+            var productos1 = context.Productos.Where(e => e.Id == id).FirstOrDefault();
 
-        //Cargado explicito
+            var proveedores = context.Proveedores.Where(m => m.Id == id).FirstOrDefaultAsync();
 
-        [HttpGet("CargadoExplicito/{id:int}")]
-
-
-        
-
-
-        //insertando registros
-
-
-        [HttpPost("Ingresar_Registros")]
-
-        public async Task<ActionResult> Post(Productos productos)
-        {
-
-            context.Logs.Add(new Logs
+            if (productos1 == null)
             {
-
-                Id = Guid.NewGuid(),
-
-                Mensaje = "Ejecutando el metodo ProductosController.Get"
-            });
-
-            await context.SaveChangesAsync();
-
-            var Estado = context.Entry(productos).State;//sin agregar
-
-            //cambio el estado de productos a "agregado"
-
-            context.Add(productos);
-
-            var Estado1 = context.Entry(productos).State;//agregado
-
-            //no es que lo esta agregando sino que esta proximo a agregar para cuando confirme la accion
-
-            await context.SaveChangesAsync();//se confirma que se agrega
-
-            var Estado2 = context.Entry(productos).State;//sin modificar
-
-            return Ok($"El resultado es: " +
-                $"{Estado} y despues el estado es: " +
-                $"{Estado1};" +
-                $" y por ultimo se guardan los cambios como:" +
-                $"{Estado2}");
-        }
-
-
-        [HttpPost("Insertar_Varios_Registros")]
-
-        public async Task<ActionResult> PostVarios(Productos[] productos)
-        {
-
-            context.Add(productos);
-
-            await context.SaveChangesAsync();
-
-            return Ok();
-
-        }
-
-
-        [HttpDelete("{id:int}")]//borrado normal
-
-        public async Task<ActionResult> Delete(int id)
-        {
-
-            var producto = await context.Productos.FirstOrDefaultAsync(prop => prop.IdProductos == id);
-
-            if (producto is null)
-            {
-                return NotFound();
+                return NotFound("No existe la especialidad a modificar");
             }
 
-            context.Remove(producto);
+            productos1.NombreProducto = productos.NombreProducto;
 
-            await context.SaveChangesAsync();
-
-            return Ok();
-        }
-
-        [HttpPost]
-
-        public async Task<ActionResult> PostRepetir(Productos productos)
-        {
-
-            var ProductoExisteConEseNombre = await context.Productos.
-                AnyAsync(prop => prop.NombreProducto == productos.NombreProducto);
-
-            if (ProductoExisteConEseNombre)
+            try
             {
-                return BadRequest
-                    ($"Ya existe Producto con ese nombre: {productos.NombreProducto}");
+                
+                context.Productos.Update(productos1);
+                context.SaveChanges();
+                return Ok();
             }
-            return Ok();
-        }
-
-
-        [HttpGet("{id:int}")]
-        public async Task<ActionResult> FechaGet(int id, DateTime fechavencido)
-        {
-
-            var productos2 = await context.Productos.AsTracking().
-                Include(x => x.NombreProducto).
-                OrderBy(x => x.FechaVencimientoProducto).
-                Where(x => x.FechaVencimientoProducto <= fechavencido).
-                FirstOrDefaultAsync(x => x.IdProductos == id);
-
-
-            if (productos2.FechaVencimientoProducto < Convert.ToDateTime(fechavencido.Year))
+            catch (Exception e)
             {
-                return BadRequest("Producto vencido");
+                return BadRequest($"Los datos no han sido actualizados por: {e.Message}");
             }
-
-
-            return Ok();
-
         }
+
     }
 }

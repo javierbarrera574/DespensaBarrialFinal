@@ -1,27 +1,26 @@
-﻿using DespensaBarrialFinal.BD;
-using DespensaBarrialFinal.BD.Entidades;
+﻿using DespensaBarrialFinal.BD.Datos;
+using DespensaBarrialFinal.BD.Datos.Entidades;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace WebApplication1.Controllers
+namespace DespensaBarrialFinal.Server.Controllers
 {
 
     [ApiController]
-    [Route("API/Proveedores")]
+    [Route("api/Proveedores")]
 
     public class ProveedoresControlador : ControllerBase
     {
 
-        private readonly ApplicationDbContext  context;
+        private readonly AplicacionDbContext  context;
 
-        public ProveedoresControlador(ApplicationDbContext contexto)
+        public ProveedoresControlador(AplicacionDbContext contexto)
         {
             this.context = contexto;
 
         }
 
-
-        [HttpGet("MostrarProveedores")]
+        [HttpGet]
 
         public async Task<ActionResult<List<Proveedores>>> Get()
         {
@@ -32,21 +31,28 @@ namespace WebApplication1.Controllers
         }
 
 
-        [HttpPost("AgregarProveedores")]
-        public async Task<ActionResult> Post(Proveedores proveedores)
+        [HttpPost]
+        public async Task<ActionResult<int>> Post(Proveedores proveedores)
         {
-            context.Proveedores.Add(proveedores);
-            context.Add(proveedores);
-            await context.SaveChangesAsync();
-            return Ok();
+            try
+            {
+                context.Proveedores.Add(proveedores);
+                await context.SaveChangesAsync();
+                return proveedores.Id;
+            }
+            catch (Exception e)
+            {
+
+                return BadRequest(e.Message);
+            }
         }
 
-        [HttpPut("{id:int}")]//Actualizar el registro creado anteriormente con post atraves del id
+        [HttpPut("{id}")]
         public async Task<ActionResult> Put(int id)
         {
             var proveedoresDB = await context.Proveedores.
                 AsTracking().
-                FirstOrDefaultAsync(a => a.Id_delproveedor == id);
+                FirstOrDefaultAsync(a => a.Id == id);
 
             if (proveedoresDB is null)
             {
@@ -60,24 +66,33 @@ namespace WebApplication1.Controllers
 
 
 
-        [HttpDelete("BorrarProveedor")]
+        [HttpDelete("{id}")]
 
-        public async Task<ActionResult> PostBorrar(int id)
+        public ActionResult PostBorrar(int id)
         {
             var Proveedor = 
-                await context.Proveedores.
-                FirstOrDefaultAsync(prop => prop.Id_delproveedor == id);
+                
+                context.Proveedores.
+                FirstOrDefaultAsync(prop => prop.Id == id);
 
             if (Proveedor is null)
             {
-                return BadRequest("No existe el proveedor");
+                return BadRequest($"El registro {id} no fue encontrar encontrado para ser borrado");
             }
 
-            context.Remove(Proveedor);
 
-            await context.SaveChangesAsync();
+            try
+            {
+                context.Remove(Proveedor);
 
-            return Ok();
+                context.SaveChangesAsync();
+
+                return Ok();
+            }
+            catch(Exception error)
+            {
+                return BadRequest($"El proveedor no pudo eliminarse: {error.Message}");
+            }
         }
     }
 }

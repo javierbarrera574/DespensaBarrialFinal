@@ -1,18 +1,46 @@
-using DespensaBarrialFinal.BD;
-using Microsoft.AspNetCore.ResponseCompression;
+
+using DespensaBarrialFinal.BD.Datos;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var conn = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddDbContext<AplicacionDbContext>(opciones => opciones.UseSqlServer(conn));
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Despensa Barrial", Version = "v1" });
+});
+
+
+
+
 // Add services to the container.
+//.NET3.1
+//Instala la librería: Microsoft.AspNetCore.Mvc.NewtonsoftJson
+//services.AddControllers().AddNewtonsoftJson(x =>
+//    x.SerializerSettings.ReferenceLoopHandling =
+//    Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+//.NET5
+//services.AddControllersWithViews().AddJsonOptions(x =>
+//    x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve);
+//.NET6
 
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews()
+                .AddJsonOptions(x => x.JsonSerializerOptions
+                                      .ReferenceHandler = ReferenceHandler
+                                      .IgnoreCycles);
+
 builder.Services.AddRazorPages();
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<ApplicationDbContext>(opciones =>
 
-opciones.UseSqlServer(connectionString));
+
+
 var app = builder.Build();
+
+app.UseSwagger();
+app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json",
+                                        "Despensa Barrial vFinal"));
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -39,3 +67,4 @@ app.MapControllers();
 app.MapFallbackToFile("index.html");
 
 app.Run();
+

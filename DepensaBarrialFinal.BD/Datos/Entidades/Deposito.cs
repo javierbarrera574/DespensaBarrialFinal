@@ -1,11 +1,24 @@
-﻿namespace DespensaBarrialFinal.BD.Datos.Entidades
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace DespensaBarrialFinal.BD.Datos.Entidades
 {
-    public class Deposito : EntityBase
+    public class Deposito 
     {
 
-        public int Unidad_minima { get; set; }
+        public int Id { get; set; }
+
+        [Required]
+
+        public string CodigoEstante { get; set; }
+
+        [Required]
+        public string CategoriaEnEstante { get; set; }
+
+        [Required]
+        public string CantidadEnEstante { get; set; }
 
         public List<Productos>  Productos { get; set; }
+
 
     }
 }

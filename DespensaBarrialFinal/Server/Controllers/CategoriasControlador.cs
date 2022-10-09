@@ -24,43 +24,118 @@ namespace DespensaBarrialFinal.Server.Controllers
             return respuesta;
         }
 
-        [HttpPost]
 
-        public async Task<ActionResult<Categorias>> Post(Categorias categorias)
+        [HttpGet("id:int")]
+
+        public async Task<ActionResult<Categorias>> GetBuscar(int id)
         {
-            try
-            {
-                context.Categorias.Add(categorias);
-                await context.SaveChangesAsync();
-                return categorias;
 
-            }
-            catch (Exception p)
+            var categoria = await context.Categorias.
+                Where(x => x.Id == id).
+                //Include(p=>p.Productos).
+                FirstOrDefaultAsync();
+
+            if (categoria is null)
             {
-                return BadRequest(p.Message);
+                return NotFound($"No se encontro el administrador de Id: {id}");
             }
+
+            return categoria;
+
+
         }
 
 
-        [HttpPost("{id:int}")]
+        [HttpPost]
 
-        public async Task<ActionResult<Categorias>> AgregarProductoConCategoria(int id)
+        public async Task<ActionResult<int>> post(Categorias categorias)
+        {
+            try
+            {
+                context.Add(categorias);
+                await context.SaveChangesAsync();
+                return categorias.Id;
+
+            }
+            catch (Exception e)
+            {
+
+                return BadRequest(e.Message);
+                
+            }
+        }
+
+        [HttpPut("id:int")]
+
+        public ActionResult PutActualizar(int id, [FromBody] Categorias categorias)
+        { 
+            if (id != categorias.Id)
+            {
+                return BadRequest("No se encontro el registro");
+            }
+
+
+            var registro = context.Categorias.Where(x => x.Id == id).FirstOrDefault();
+
+            //como la categoria esta en la base de datos dentro de registro
+            //y categoria es como quiero que quede despues de hacer la modificacion
+
+            if (registro is null)
+            {
+                return NotFound("No existe la categoria a modificar");
+            }
+
+
+            //actualizacion de los objetos que hay en la base de datos con los que hay en el cuerpo(body)
+
+            registro.TipoCategoria = categorias.TipoCategoria;
+            registro.CodigoCategoria = categorias.CodigoCategoria;
+
+
+            try
+            {
+
+                context.Categorias.Update(registro);//si mando aca dentro de update, al objeto categorias, no va a haber conexion con la base de datos
+                context.SaveChanges();
+                return Ok();
+
+            }
+            catch (Exception e)
+            {
+                return BadRequest
+                    ($"No se pudo actualizar el administrador, por el siguiente error: {e.Message}");
+            }
+
+        }
+
+
+        [HttpDelete("id:int")]
+
+
+        public ActionResult Borrar(int id)
         {
 
-            var productos_categoria = context.Productos.
-                Where(c => c.Id == id).
-                Include(c => c.NombreProducto).
-                Include(n => n.DescripcionProducto).
-                Include(f => f.FechaVencimientoProducto).
-                Include(p => p.PrecioProducto).
-                Include(c => c.Categorias).
-                FirstOrDefaultAsync();
+            var registro = context.Categorias.Where(x => x.Id == id).FirstOrDefault();
+
+            if (registro is null)
+            {
+                return NotFound($"El registro {id} no fue encontrado");
+            }
 
 
+            try
+            {
+                context.Remove(registro);
+                context.SaveChanges();
+                return Ok($"El registro: {registro.TipoCategoria} ha sido eliminado");
+            }
+            catch (Exception e)
+            {
 
-            context.Add(productos_categoria);
-            await context.SaveChangesAsync();
-            return Ok();
+                return BadRequest($"El registro no pudo eliminarse por: {e.Message}");
+
+            }
+
         }
 
     }

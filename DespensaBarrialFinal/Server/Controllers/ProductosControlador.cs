@@ -29,17 +29,37 @@ namespace DespensaBarrialFinal.Server.Controllers
         }
 
 
+        [HttpGet("{id:int}")]
+        public async Task<ActionResult<Productos>> Get(int id)
+        {
+            var producto = await context.Productos
+
+                .Where(e => e.Id == id)
+                .FirstOrDefaultAsync();
+
+
+            if (producto is  null)
+
+            {
+                return NotFound($"No existe el Producto de Id= {id}");
+
+            }
+
+            return producto;
+
+        }
+
 
 
         [HttpPost]
 
-        public async Task<ActionResult<Productos>> PostAgregar(Productos productos)
+        public async Task<ActionResult<int>> PostAgregar(Productos productos)
         {
             try
             {
                 context.Add(productos);
                 await context.SaveChangesAsync();
-                return Ok();
+                return productos.Id;
             }
             catch(Exception e)
             {
@@ -48,25 +68,7 @@ namespace DespensaBarrialFinal.Server.Controllers
         }
 
 
-
-        [HttpGet("{id}")]
-
-        public async Task<ActionResult<Productos>> GetBuscarPorId(int id)
-        {
-
-            var productos = await context.Productos.
-
-                Where(prop => prop.Id == id).
-                Include(p => p.Proveedores).
-                FirstOrDefaultAsync() ;
-
-            return productos;
-
-
-        }
-
-
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:int}")]
         public ActionResult DeleteBorrar (int id)
         {
             var producto = context.Productos.Where(x => x.Id == id).FirstOrDefault();
@@ -91,7 +93,7 @@ namespace DespensaBarrialFinal.Server.Controllers
        
 
 
-        [HttpPut("{id}")]
+        [HttpPut("{id:int}")]
         public ActionResult Put(int id, [FromBody] Productos productos)
         {
             if (id != productos.Id)

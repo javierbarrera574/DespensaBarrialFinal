@@ -2,8 +2,10 @@
 
 namespace DespensaBarrialFinal.BD.Datos.Entidades
 {
-    public class Categorias:EntityBase
+    public class Categorias
     {
+
+        public int Id { get; set; }
 
         [Required]
 
@@ -14,7 +16,7 @@ namespace DespensaBarrialFinal.BD.Datos.Entidades
 
         public string CodigoCategoria { get; set; }
 
-        public Productos Producto { get; set; }
+        public List<Productos> Productos { get; set; }
 
     }
 }

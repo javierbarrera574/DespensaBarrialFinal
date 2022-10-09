@@ -47,21 +47,40 @@ namespace DespensaBarrialFinal.Server.Controllers
             }
         }
 
-        [HttpPut("{id}")]
-        public async Task<ActionResult> Put(int id)
+        [HttpPut("{id:int}")]
+        public ActionResult Put(int id, [FromBody] Proveedores proveedores)
         {
-            var proveedoresDB = await context.Proveedores.
-                AsTracking().
-                FirstOrDefaultAsync(a => a.Id == id);
 
-            if (proveedoresDB is null)
+
+            if (id != proveedores.Id)
             {
-                return NotFound();
+                return BadRequest("Datos incorrectos");
             }
 
-          
-            await context.SaveChangesAsync();
-            return Ok();
+            var registro = context.Proveedores.Where(e => e.Id == id).FirstOrDefault();
+
+            if (registro is null)
+            {
+                return NotFound("No existe la especialidad a modificar");
+            }
+
+            registro.Nombre = proveedores.Nombre;
+            registro.CorreoElectronico = proveedores.CorreoElectronico;
+            registro.NumeroTelefono = proveedores.NumeroTelefono;
+
+
+            try
+            {
+              
+                context.Proveedores.Update(registro);
+                context.SaveChanges();
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return BadRequest($"Los datos no han sido actualizados por: {e.Message}");
+            }
+
         }
 
 
@@ -70,10 +89,8 @@ namespace DespensaBarrialFinal.Server.Controllers
 
         public ActionResult PostBorrar(int id)
         {
-            var Proveedor = 
-                
-                context.Proveedores.
-                FirstOrDefaultAsync(prop => prop.Id == id);
+            var Proveedor = context.Proveedores.Where(x => x.Id == id).FirstOrDefault();
+             
 
             if (Proveedor is null)
             {
@@ -85,7 +102,7 @@ namespace DespensaBarrialFinal.Server.Controllers
             {
                 context.Remove(Proveedor);
 
-                context.SaveChangesAsync();
+                context.SaveChanges();
 
                 return Ok();
             }

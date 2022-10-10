@@ -5,6 +5,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DespensaBarrialFinal.Server.Controllers
 {
+
+    [ApiController]
+    [Route("api/Deposito")]
     public class DepositoControlador:ControllerBase
     {
 

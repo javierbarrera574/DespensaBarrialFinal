@@ -10,7 +10,7 @@ namespace DespensaBarrialFinal.BD.Datos
 
         public DbSet<Administrador> Administrador { get; set; }
 
-        public DbSet<Categorias> Categorias { get; set; }
+        public DbSet<Categoria> Categoria { get; set; }
 
         public DbSet<Deposito> Deposito { get; set; }
 

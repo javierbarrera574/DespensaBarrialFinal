@@ -2,7 +2,7 @@
 
 namespace DespensaBarrialFinal.BD.Datos.Entidades
 {
-    public class Categorias
+    public class Categoria
     {
 
         public int Id { get; set; }

@@ -118,11 +118,10 @@ namespace DespensaBarrialFinal.Server.Controllers
 
             //actualizacion de los objetos que hay en la base de datos con los que hay en el cuerpo(body)
 
-            registro.NombreEmpleado = empleado.NombreEmpleado;
-            registro.EdadEmpleado = empleado.EdadEmpleado;
-            registro.Domicilio = empleado.Domicilio;
-            registro.NumeroTelefono = empleado.NumeroTelefono;
-            registro.DNI = empleado.DNI;
+            registro.edad = empleado.edad;
+            registro.edad = empleado.edad;
+           
+          
 
 
             try
@@ -156,7 +155,7 @@ namespace DespensaBarrialFinal.Server.Controllers
             {
                 context.Remove(registro);
                 context.SaveChanges();
-                return Ok($"El registro: {registro.NombreEmpleado} ha sido eliminado");
+                return Ok($"El registro: {registro.nombre} ha sido eliminado");
             }
             catch (Exception e)
             {

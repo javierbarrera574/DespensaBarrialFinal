@@ -22,7 +22,7 @@ namespace DespensaBarrialFinal.Server.Controllers
 
         [HttpGet]
 
-        public async Task<ActionResult<List<Proveedores>>> Get()
+        public async Task<ActionResult<List<Proveedor>>> Get()
         {
 
             var respuesta =  await context.Proveedores.ToListAsync();
@@ -32,7 +32,7 @@ namespace DespensaBarrialFinal.Server.Controllers
 
 
         [HttpPost]
-        public async Task<ActionResult<int>> Post(Proveedores proveedores)
+        public async Task<ActionResult<int>> Post(Proveedor proveedores)
         {
             try
             {
@@ -43,12 +43,12 @@ namespace DespensaBarrialFinal.Server.Controllers
             catch (Exception e)
             {
 
-                return BadRequest(e.Message);
+                return BadRequest($"No se pudo agregar el proveedor por: {e.Message} ");
             }
         }
 
         [HttpPut("{id:int}")]
-        public ActionResult Put(int id, [FromBody] Proveedores proveedores)
+        public ActionResult Put(int id, [FromBody] Proveedor proveedores)
         {
 
 
@@ -94,7 +94,7 @@ namespace DespensaBarrialFinal.Server.Controllers
 
             if (Proveedor is null)
             {
-                return BadRequest($"El registro {id} no fue encontrar encontrado para ser borrado");
+                return BadRequest($"El registro {id} no fue encontrado para ser borrado");
             }
 
 
@@ -110,6 +110,26 @@ namespace DespensaBarrialFinal.Server.Controllers
             {
                 return BadRequest($"El proveedor no pudo eliminarse: {error.Message}");
             }
+        }
+
+        [HttpGet("id:int")]
+
+        public async Task<ActionResult<Proveedor>> GetBuscar(int id)
+        {
+
+            var proveedor = await context.Proveedores.
+                Where(x => x.Id == id).
+                //Include(p=>p.Productos).
+                FirstOrDefaultAsync();
+
+            if (proveedor is null)
+            {
+                return NotFound($"No se encontro el proveedor de Id: {id}");
+            }
+
+            return proveedor;
+
+
         }
     }
 }

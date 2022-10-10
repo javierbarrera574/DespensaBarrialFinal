@@ -7,7 +7,7 @@ namespace DespensaBarrialFinal.BD.Datos.Entidades
 
     [Index(nameof(NombreProducto), IsUnique = true)]
 
-    public class Productos
+    public class Producto
     {
 
         public int Id { get; set; }
@@ -25,7 +25,7 @@ namespace DespensaBarrialFinal.BD.Datos.Entidades
 
         public string PrecioProducto { get; set; }
 
-        public List<Proveedores> Proveedores { get; set; }
+        public List<Proveedor> Proveedores { get; set; }
 
         public int? CategoriaId { get; set; }
 

@@ -7,13 +7,13 @@ namespace DespensaBarrialFinal.Server.Controllers
 {
 
     [ApiController]
-    [Route("api/Deposito")]
-    public class DepositoControlador:ControllerBase
+    [Route("api/Depositos")]
+    public class DepositosControlador:ControllerBase
     {
 
         private readonly AplicacionDbContext context;
 
-        public DepositoControlador(AplicacionDbContext contexto)
+        public DepositosControlador(AplicacionDbContext contexto)
         {
             this.context = contexto;
 
@@ -24,7 +24,7 @@ namespace DespensaBarrialFinal.Server.Controllers
         [HttpGet]
         public async Task<ActionResult<List<Deposito>>> Get()
         {
-            var respuesta = await context.Deposito.ToListAsync();
+            var respuesta = await context.Depositos.ToListAsync();
 
             return respuesta;
         }
@@ -36,7 +36,7 @@ namespace DespensaBarrialFinal.Server.Controllers
         {
             try
             {
-                context.Deposito.Add(deposito);
+                context.Depositos.Add(deposito);
                 await context.SaveChangesAsync();
                 return deposito.Id;//Es devuelto con el id asignado
 
@@ -57,7 +57,7 @@ namespace DespensaBarrialFinal.Server.Controllers
             }
 
 
-            var registro = context.Deposito.Where(x => x.Id == id).FirstOrDefault();
+            var registro = context.Depositos.Where(x => x.Id == id).FirstOrDefault();
 
             //como la categoria esta en la base de datos dentro de registro
             //y categoria es como quiero que quede despues de hacer la modificacion
@@ -78,7 +78,7 @@ namespace DespensaBarrialFinal.Server.Controllers
             try
             {
 
-                context.Deposito.Update(registro);//si mando aca dentro de update, al objeto categorias, no va a haber conexion con la base de datos
+                context.Depositos.Update(registro);//si mando aca dentro de update, al objeto categorias, no va a haber conexion con la base de datos
                 context.SaveChanges();
                 return Ok();
 
@@ -98,7 +98,7 @@ namespace DespensaBarrialFinal.Server.Controllers
         public ActionResult Borrar(int id)
         {
 
-            var registro = context.Deposito.Where(x => x.Id == id).FirstOrDefault();
+            var registro = context.Depositos.Where(x => x.Id == id).FirstOrDefault();
 
             if (registro is null)
             {
@@ -118,6 +118,25 @@ namespace DespensaBarrialFinal.Server.Controllers
                 return BadRequest($"El registro no pudo eliminarse por: {e.Message}");
 
             }
+
+        }
+
+        [HttpGet("id:int")]
+
+        public async Task<ActionResult<Deposito>> GetBuscar(int id)
+        {
+
+            var deposito = await context.Depositos.
+                Where(x => x.Id == id).
+                FirstOrDefaultAsync();
+
+            if (deposito is null)
+            {
+                return NotFound($"No se encontro el numero de deposito de Id: {id}");
+            }
+
+            return deposito;
+
 
         }
     }

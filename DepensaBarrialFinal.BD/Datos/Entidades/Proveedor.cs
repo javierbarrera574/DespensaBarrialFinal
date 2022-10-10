@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace DespensaBarrialFinal.BD.Datos.Entidades
 {
-    public class Proveedores
+    public class Proveedor
     {
 
         public int Id { get; set; }
@@ -20,9 +20,11 @@ namespace DespensaBarrialFinal.BD.Datos.Entidades
 
         public string NumeroTelefono { get; set; }
 
-        public int AdministradorId { get; set; }
 
-        public Administrador Administrador { get; set; }
+        //[Required]
+        //public int AdministradorId { get; set; }
+
+        //public Administrador Administrador { get; set; }
 
     }
 }

@@ -12,7 +12,7 @@ namespace DespensaBarrialFinal.BD.Datos.Entidades
         [Required]
         public string NumeroTelefono { get; set; }
 
-        public List<Proveedores> Proveedores { get; set; }
+        public List<Proveedor> Proveedores { get; set; }
 
     }
 }

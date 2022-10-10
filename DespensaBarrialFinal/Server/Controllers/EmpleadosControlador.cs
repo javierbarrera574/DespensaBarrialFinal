@@ -8,13 +8,13 @@ namespace DespensaBarrialFinal.Server.Controllers
 
     [ApiController]
     [Route("api/Empleados")]
-    public class EmpleadoControlador:ControllerBase
+    public class EmpleadosControlador:ControllerBase
     {
 
 
         private readonly AplicacionDbContext context;
 
-        public EmpleadoControlador(AplicacionDbContext context)
+        public EmpleadosControlador(AplicacionDbContext context)
         {
             this.context = context;
         }
@@ -23,7 +23,7 @@ namespace DespensaBarrialFinal.Server.Controllers
         public async Task<ActionResult<List<Empleado>>> Get()
         {
 
-            var registro = await context.Empleado.ToListAsync();
+            var registro = await context.Empleados.ToListAsync();
 
             return registro;
 
@@ -82,7 +82,7 @@ namespace DespensaBarrialFinal.Server.Controllers
         public async Task<ActionResult<Empleado>> GetBuscar(int id)
         {
 
-            var empleado = await context.Empleado.
+            var empleado = await context.Empleados.
                 Where(x => x.Id == id).
                 FirstOrDefaultAsync();
 
@@ -105,7 +105,7 @@ namespace DespensaBarrialFinal.Server.Controllers
             }
 
 
-            var registro = context.Empleado.Where(x => x.Id == id).FirstOrDefault();
+            var registro = context.Empleados.Where(x => x.Id == id).FirstOrDefault();
 
             //como la categoria esta en la base de datos dentro de registro
             //y categoria es como quiero que quede despues de hacer la modificacion
@@ -127,7 +127,7 @@ namespace DespensaBarrialFinal.Server.Controllers
             try
             {
 
-                context.Empleado.Update(registro);//si mando aca dentro de update, al objeto categorias, no va a haber conexion con la base de datos
+                context.Empleados.Update(registro);//si mando aca dentro de update, al objeto categorias, no va a haber conexion con la base de datos
                 context.SaveChanges();
                 return Ok();
 
@@ -143,7 +143,7 @@ namespace DespensaBarrialFinal.Server.Controllers
 
         public ActionResult delete(int id)
         {
-            var registro = context.Empleado.Where(x => x.Id == id).FirstOrDefault();
+            var registro = context.Empleados.Where(x => x.Id == id).FirstOrDefault();
 
             if (registro is null)
             {

@@ -40,7 +40,7 @@ namespace DepensaBarrialFinal.BD.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Administrador");
+                    b.ToTable("Administradores");
                 });
 
             modelBuilder.Entity("DespensaBarrialFinal.BD.Datos.Entidades.Categoria", b =>
@@ -61,7 +61,7 @@ namespace DepensaBarrialFinal.BD.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categoria");
+                    b.ToTable("Categorias");
                 });
 
             modelBuilder.Entity("DespensaBarrialFinal.BD.Datos.Entidades.Deposito", b =>
@@ -86,7 +86,7 @@ namespace DepensaBarrialFinal.BD.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Deposito");
+                    b.ToTable("Depositos");
                 });
 
             modelBuilder.Entity("DespensaBarrialFinal.BD.Datos.Entidades.Empleado", b =>
@@ -111,10 +111,10 @@ namespace DepensaBarrialFinal.BD.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Empleado");
+                    b.ToTable("Empleados");
                 });
 
-            modelBuilder.Entity("DespensaBarrialFinal.BD.Datos.Entidades.Productos", b =>
+            modelBuilder.Entity("DespensaBarrialFinal.BD.Datos.Entidades.Producto", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -155,7 +155,7 @@ namespace DepensaBarrialFinal.BD.Migrations
                     b.ToTable("Productos");
                 });
 
-            modelBuilder.Entity("DespensaBarrialFinal.BD.Datos.Entidades.Proveedores", b =>
+            modelBuilder.Entity("DespensaBarrialFinal.BD.Datos.Entidades.Proveedor", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -178,19 +178,19 @@ namespace DepensaBarrialFinal.BD.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ProductosId")
+                    b.Property<int?>("ProductoId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("AdministradorId");
 
-                    b.HasIndex("ProductosId");
+                    b.HasIndex("ProductoId");
 
                     b.ToTable("Proveedores");
                 });
 
-            modelBuilder.Entity("DespensaBarrialFinal.BD.Datos.Entidades.Productos", b =>
+            modelBuilder.Entity("DespensaBarrialFinal.BD.Datos.Entidades.Producto", b =>
                 {
                     b.HasOne("DespensaBarrialFinal.BD.Datos.Entidades.Categoria", "Categoria")
                         .WithMany("Productos")
@@ -203,7 +203,7 @@ namespace DepensaBarrialFinal.BD.Migrations
                     b.Navigation("Categoria");
                 });
 
-            modelBuilder.Entity("DespensaBarrialFinal.BD.Datos.Entidades.Proveedores", b =>
+            modelBuilder.Entity("DespensaBarrialFinal.BD.Datos.Entidades.Proveedor", b =>
                 {
                     b.HasOne("DespensaBarrialFinal.BD.Datos.Entidades.Administrador", "Administrador")
                         .WithMany("Proveedores")
@@ -211,9 +211,9 @@ namespace DepensaBarrialFinal.BD.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("DespensaBarrialFinal.BD.Datos.Entidades.Productos", null)
+                    b.HasOne("DespensaBarrialFinal.BD.Datos.Entidades.Producto", null)
                         .WithMany("Proveedores")
-                        .HasForeignKey("ProductosId");
+                        .HasForeignKey("ProductoId");
 
                     b.Navigation("Administrador");
                 });
@@ -233,7 +233,7 @@ namespace DepensaBarrialFinal.BD.Migrations
                     b.Navigation("Productos");
                 });
 
-            modelBuilder.Entity("DespensaBarrialFinal.BD.Datos.Entidades.Productos", b =>
+            modelBuilder.Entity("DespensaBarrialFinal.BD.Datos.Entidades.Producto", b =>
                 {
                     b.Navigation("Proveedores");
                 });

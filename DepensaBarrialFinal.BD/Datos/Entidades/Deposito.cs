@@ -17,7 +17,7 @@ namespace DespensaBarrialFinal.BD.Datos.Entidades
         [Required]
         public string CantidadEnEstante { get; set; }
 
-        public List<Productos>  Productos { get; set; }
+        public List<Producto>  Productos { get; set; }
 
 
     }

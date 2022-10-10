@@ -22,7 +22,7 @@ namespace DespensaBarrialFinal.Server.Controllers
 
 
         [HttpGet]//esta bien
-        public async Task<ActionResult<List<Productos>>> Get()
+        public async Task<ActionResult<List<Producto>>> Get()
         {
             var respuesta = await context.Productos.ToListAsync();
             return respuesta;
@@ -30,7 +30,7 @@ namespace DespensaBarrialFinal.Server.Controllers
 
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<Productos>> Get(int id)
+        public async Task<ActionResult<Producto>> Get(int id)
         {
             var producto = await context.Productos
 
@@ -53,7 +53,7 @@ namespace DespensaBarrialFinal.Server.Controllers
 
         [HttpPost]
 
-        public async Task<ActionResult<int>> PostAgregar(Productos productos)
+        public async Task<ActionResult<int>> PostAgregar(Producto productos)
         {
             try
             {
@@ -94,7 +94,7 @@ namespace DespensaBarrialFinal.Server.Controllers
 
 
         [HttpPut("{id:int}")]
-        public ActionResult Put(int id, [FromBody] Productos productos)
+        public ActionResult Put(int id, [FromBody] Producto productos)
         {
             if (id != productos.Id)
             {

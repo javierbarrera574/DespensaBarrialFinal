@@ -7,11 +7,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DespensaBarrialFinal.Server.Controllers
 {
-    public class AdministradorControlador : ControllerBase
+    [ApiController]
+    [Route("api/Administradores")]
+    public class AdministradoresControlador : ControllerBase
     {
         private readonly AplicacionDbContext context;
 
-        public AdministradorControlador(AplicacionDbContext contexto)
+        public AdministradoresControlador(AplicacionDbContext contexto)
         {
             this.context = contexto;
         }
@@ -19,7 +21,7 @@ namespace DespensaBarrialFinal.Server.Controllers
         [HttpGet]//esta bien
         public async Task<ActionResult<List<Administrador>>> Get()
         {
-            var respuesta = await context.Administrador.ToListAsync();
+            var respuesta = await context.Administradores.ToListAsync();
 
             return respuesta;
         }
@@ -52,7 +54,7 @@ namespace DespensaBarrialFinal.Server.Controllers
             }
 
 
-            var registro = context.Administrador.Where(x => x.Id == id).FirstOrDefault();
+            var registro = context.Administradores.Where(x => x.Id == id).FirstOrDefault();
 
             //como la categoria esta en la base de datos dentro de registro
             //y categoria es como quiero que quede despues de hacer la modificacion
@@ -72,7 +74,7 @@ namespace DespensaBarrialFinal.Server.Controllers
             try
             {
 
-                context.Administrador.Update(registro);//si mando aca dentro de update, al objeto categorias, no va a haber conexion con la base de datos
+                context.Administradores.Update(registro);//si mando aca dentro de update, al objeto categorias, no va a haber conexion con la base de datos
                 context.SaveChanges();
                 return Ok();
 
@@ -88,7 +90,7 @@ namespace DespensaBarrialFinal.Server.Controllers
 
         public ActionResult Delete(int id)
         {
-            var registro = context.Administrador.Where(x => x.Id == id).FirstOrDefault();
+            var registro = context.Administradores.Where(x => x.Id == id).FirstOrDefault();
 
             if (registro is null)
             {
@@ -108,6 +110,25 @@ namespace DespensaBarrialFinal.Server.Controllers
                 return BadRequest($"El administrador no pudo eliminarse por: {e.Message}");
 
             }
+        }
+
+        [HttpGet("id:int")]
+
+        public async Task<ActionResult<Administrador>> GetBuscar(int id)
+        {
+
+            var administrador = await context.Administradores.
+                Where(x => x.Id == id).
+                FirstOrDefaultAsync();
+
+            if  (administrador is null)
+            {
+                return NotFound($"No se encontro el administrador de Id: {id}");
+            }
+
+            return administrador;
+
+
         }
 
     }

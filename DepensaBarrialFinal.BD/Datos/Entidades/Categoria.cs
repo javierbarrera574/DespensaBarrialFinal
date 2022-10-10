@@ -16,7 +16,7 @@ namespace DespensaBarrialFinal.BD.Datos.Entidades
 
         public string CodigoCategoria { get; set; }
 
-        public List<Productos> Productos { get; set; }
+        public List<Producto> Productos { get; set; }
 
     }
 }

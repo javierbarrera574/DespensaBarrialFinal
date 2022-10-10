@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 namespace DespensaBarrialFinal.Server.Controllers
 {
     [ApiController]
-    [Route("api/Categoria")]
+    [Route("api/Categorias")]
     public class CategoriasControlador : ControllerBase
     {
 
@@ -20,7 +20,7 @@ namespace DespensaBarrialFinal.Server.Controllers
         [HttpGet]//esta bien
         public async Task<ActionResult<List<Categoria>>> Get()
         {
-            var respuesta = await context.Categoria.ToListAsync();
+            var respuesta = await context.Categorias.ToListAsync();
             return respuesta;
         }
 
@@ -30,14 +30,13 @@ namespace DespensaBarrialFinal.Server.Controllers
         public async Task<ActionResult<Categoria>> GetBuscar(int id)
         {
 
-            var categoria = await context.Categoria.
+            var categoria = await context.Categorias.
                 Where(x => x.Id == id).
-                //Include(p=>p.Productos).
                 FirstOrDefaultAsync();
 
             if (categoria is null)
             {
-                return NotFound($"No se encontro el administrador de Id: {id}");
+                return NotFound($"No se encontro la categoria de Id: {id}");
             }
 
             return categoria;
@@ -75,7 +74,7 @@ namespace DespensaBarrialFinal.Server.Controllers
             }
 
 
-            var registro = context.Categoria.Where(x => x.Id == id).FirstOrDefault();
+            var registro = context.Categorias.Where(x => x.Id == id).FirstOrDefault();
 
             //como la categoria esta en la base de datos dentro de registro
             //y categoria es como quiero que quede despues de hacer la modificacion
@@ -95,7 +94,7 @@ namespace DespensaBarrialFinal.Server.Controllers
             try
             {
 
-                context.Categoria.Update(registro);//si mando aca dentro de update, al objeto categorias, no va a haber conexion con la base de datos
+                context.Categorias.Update(registro);//si mando aca dentro de update, al objeto categorias, no va a haber conexion con la base de datos
                 context.SaveChanges();
                 return Ok();
 
@@ -115,7 +114,7 @@ namespace DespensaBarrialFinal.Server.Controllers
         public ActionResult Borrar(int id)
         {
 
-            var registro = context.Categoria.Where(x => x.Id == id).FirstOrDefault();
+            var registro = context.Categorias.Where(x => x.Id == id).FirstOrDefault();
 
             if (registro is null)
             {

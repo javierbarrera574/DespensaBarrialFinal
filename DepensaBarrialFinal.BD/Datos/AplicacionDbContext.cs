@@ -8,17 +8,17 @@ namespace DespensaBarrialFinal.BD.Datos
 		public AplicacionDbContext(DbContextOptions options) : base(options) { }
 
 
-        public DbSet<Administrador> Administrador { get; set; }
+        public DbSet<Administrador> Administradores { get; set; }
 
-        public DbSet<Categoria> Categoria { get; set; }
+        public DbSet<Categoria> Categorias { get; set; }
 
-        public DbSet<Deposito> Deposito { get; set; }
+        public DbSet<Deposito> Depositos { get; set; }
 
-        public DbSet<Empleado> Empleado { get; set; }
+        public DbSet<Empleado> Empleados { get; set; }
 
-        public DbSet<Productos> Productos { get; set; }
+        public DbSet<Producto> Productos { get; set; }
 
-        public DbSet<Proveedores> Proveedores { get; set; }
+        public DbSet<Proveedor> Proveedores { get; set; }
 
     }
 
